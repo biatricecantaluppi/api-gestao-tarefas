@@ -1,0 +1,37 @@
+//configuração do prisma
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url = env("DATABASE_URL")
+}
+
+// tabelas
+model Usuario {
+  id        String     @id @default(uuid())
+  nome      String  
+  email     String     @unique
+  senha     String
+  projetos  Projeto[]
+  criadoEm  DateTime   @default(now())
+}
+
+model Projeto {
+  id           String      @id @default(uuid())
+  nome         String  
+  descricao    String?     @unique
+  usuarioId    String
+  usuario      Usuario     @relation(fields: [usuarioId], references: [id])
+  tarefas      Tarefa[]
+  criadoEm     DateTime    @default(now())
+}
+model Tarefa {
+  id          String   @id @default(uuid())
+  titulo      String
+  concluida   Boolean  @default(false)
+  projetoId   String
+  projeto     Projeto  @relation(fields: [projetoId], references: [id])
+  criadoEm    DateTime @default(now())
+}
